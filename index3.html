@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal Seleksi PTN 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .page {
+            display: none;
+        }
+
+        .page-active {
+            display: block;
+        }
+
+        .glass-card {
+            background: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Animasi */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        /* Level 1: Univ Dropdown */
+        .prodi-container {
+            display: none;
+            background-color: #f8fafc;
+        }
+
+        .prodi-container.active {
+            display: table-row;
+        }
+
+        .univ-header {
+            cursor: pointer;
+        }
+
+        .univ-header.open {
+            background-color: #eff6ff;
+        }
+
+        .univ-header.open .chevron-univ {
+            transform: rotate(180deg);
+        }
+
+        .chevron-univ {
+            transition: transform 0.3s;
+        }
+
+        /* Level 2: Prodi Dropdown */
+        .histori-container {
+            display: none;
+        }
+
+        .histori-container.active {
+            display: block;
+        }
+
+        .prodi-item {
+            cursor: pointer;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .prodi-item:hover {
+            background-color: #f1f5f9;
+        }
+
+        .prodi-item.open {
+            background-color: #fff;
+        }
+
+        .prodi-item.open .chevron-prodi {
+            transform: rotate(90deg);
+        }
+
+        .chevron-prodi {
+            transition: transform 0.2s;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-100 min-h-screen text-slate-800 font-sans">
+
+    <div id="home-page" class="page page-active flex flex-col items-center justify-center min-h-screen p-6">
+        <div class="text-center mb-12 animate-in">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-blue-900 mb-3 tracking-tighter uppercase">Portal Data
+                PTN 2026</h1>
+            <p class="text-slate-500 text-lg">Pilih jalur seleksi untuk melihat detail daya tampung & histori</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl animate-in">
+            <div onclick="bukaHalamanData('SNBP')"
+                class="glass-card p-10 rounded-3xl border-2 border-blue-200 text-center group">
+                <div
+                    class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-600 transition-colors">
+                    <i class="fas fa-award text-2xl text-blue-600 group-hover:text-white"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-blue-800">Jalur SNBP</h2>
+                <p class="text-blue-600 font-semibold text-sm mt-4">Buka Database <i
+                        class="fas fa-arrow-right ml-1"></i></p>
+            </div>
+
+            <div onclick="bukaHalamanData('SNBT')"
+                class="glass-card p-10 rounded-3xl border-2 border-orange-200 text-center group">
+                <div
+                    class="w-16 h-16 bg-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-orange-500 transition-colors">
+                    <i class="fas fa-edit text-2xl text-orange-600 group-hover:text-white"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-orange-800">Jalur SNBT</h2>
+                <p class="text-orange-600 font-semibold text-sm mt-4">Buka Database <i
+                        class="fas fa-arrow-right ml-1"></i></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="data-page" class="page">
+        <header class="bg-blue-800 text-white py-6 shadow-lg sticky top-0 z-50">
+            <div class="container mx-auto px-4 flex justify-between items-center">
+                <button onclick="kembaliKeHome()"
+                    class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-lg font-bold text-sm transition">
+                    <i class="fas fa-home mr-2"></i> KEMBALI
+                </button>
+                <h1 class="text-lg font-bold tracking-widest uppercase">DETAIL JALUR <span id="label-jalur"
+                        class="text-yellow-400"></span></h1>
+                <div class="hidden md:block text-xs opacity-70">Update: Mei 2026</div>
+            </div>
+        </header>
+
+        <main class="container mx-auto px-4 py-8 max-w-5xl">
+            <div class="bg-white p-4 rounded-2xl shadow-sm mb-6 flex flex-col md:flex-row gap-4 items-center">
+                <div class="relative flex-1 w-full">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="searchInput" placeholder="Cari Universitas atau Prodi..."
+                        class="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div class="flex gap-4">
+                    <div class="text-center px-4">
+                        <p class="text-[10px] text-slate-400 font-bold uppercase">Total Univ</p>
+                        <p id="stat-total-univ" class="text-xl font-black text-blue-600">-</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="ptnTableBody" class="flex flex-col gap-4">
+                <!-- Data will be loaded here as cards -->
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxlJ06iGyqt2pBW4v9KC6if5ecl_RoY5QhEWkZIp65DrOvKQix2DuRPHGiQbs-79oK1/exec";
+
+        let jalurData = [];
+        let historiData = [];
+        let currentJalur = "";
+        let cache = {};
+        let chartInstances = {};
+
+        /* ================= NAV ================= */
+        function bukaHalamanData(jalur) {
+            currentJalur = jalur;
+            document.getElementById('home-page').style.display = 'none';
+            document.getElementById('data-page').style.display = 'block';
+            document.getElementById('label-jalur').innerText = jalur;
+            muatSemuaData(jalur);
+        }
+
+        function kembaliKeHome() {
+            document.getElementById('home-page').style.display = 'flex';
+            document.getElementById('data-page').style.display = 'none';
+        }
+
+        /* ================= FETCH + CACHE ================= */
+        async function fetchData(url) {
+            if (cache[url]) return cache[url];
+
+            try {
+                const res = await fetch(url);
+                const json = await res.json();
+                cache[url] = json;
+                return json;
+            } catch (e) {
+                return [];
+            }
+        }
+
+        async function muatSemuaData(jalur) {
+            const tableBody = document.getElementById('ptnTableBody');
+            tableBody.innerHTML = `<div class="p-20 text-center bg-white rounded-2xl border border-slate-200 shadow-sm text-slate-500">Memuat data...</div>`;
+
+            const [jalurRes, historiRes] = await Promise.all([
+                fetchData(`${SCRIPT_URL}?jalur=${jalur.toLowerCase()}`),
+                fetchData(`${SCRIPT_URL}?jalur=tambahan`)
+            ]);
+
+            jalurData = jalurRes;
+            historiData = historiRes;
+
+            renderTable(jalurData);
+        }
+
+        /* ================= RENDER ================= */
+        function renderTable(data) {
+            const tableBody = document.getElementById('ptnTableBody');
+
+            const keytaDayaTampung = currentJalur === 'SNBP'
+                ? 'DAYA_TAMPUNG_SNBP_2026'
+                : 'DAYA_TAMPUNG_SNBT_2026';
+
+            const grouped = {};
+
+            data.forEach(item => {
+                const u = item.PERGURUAN_TINGGI || "LAINNYA";
+                if (!grouped[u]) grouped[u] = [];
+                grouped[u].push(item);
+            });
+
+            const univNames = Object.keys(grouped);
+            document.getElementById('stat-total-univ').innerText = univNames.length;
+
+            tableBody.innerHTML = "";
+
+            univNames.forEach((univ, i) => {
+                const prodis = grouped[univ];
+                const id = `u-${i}`;
+
+                const card = document.createElement('div');
+                card.className = "univ-card bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-md transition-shadow";
+                const provinsi = prodis[0].PROVINSI || "-";
+
+                const header = document.createElement('div');
+                header.className = "p-4 sm:p-6 flex items-center justify-between cursor-pointer hover:bg-slate-50 transition-colors";
+                header.innerHTML = `
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 bg-white rounded-xl p-2 border border-slate-100 shadow-sm flex items-center justify-center">
+                    <img src="${getLogo(univ)}" class="w-full h-full object-contain"/>
+                </div>
+                <div>
+                    <h3 class="univ-name font-bold text-lg text-slate-800">${univ}</h3>
+                    <div class="text-sm text-slate-500 flex items-center gap-2 mt-1">
+                        <i class="fas fa-map-marker-alt text-slate-400"></i> ${provinsi}
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center gap-6">
+                <div class="text-right hidden sm:block">
+                    <div class="text-[10px] uppercase font-bold text-slate-400">Total Prodi</div>
+                    <div class="font-black text-blue-600 text-xl">${prodis.length}</div>
+                </div>
+                <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center transition-transform chevron-univ">
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+        `;
+
+                const body = document.createElement('div');
+                body.id = id;
+                body.className = "hidden flex-col gap-3 p-4 bg-slate-50/50 border-t border-slate-100";
+
+                body.innerHTML = prodis.map((p, j) => {
+                    const chartId = `chart-${i}-${j}`;
+                    return `
+                <div class="prodi-item bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div onclick="toggleChart('${chartId}')" class="p-4 flex justify-between items-center cursor-pointer hover:bg-blue-50/50 transition-colors">
+                        <div>
+                            <b class="text-slate-800">${p.PROGRAM_STUDI}</b>
+                            <div class="text-xs font-medium bg-slate-100 text-slate-600 w-max px-2 py-1 rounded mt-2">${p.JENJANG}</div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="text-right">
+                                <div class="text-[10px] text-slate-400 uppercase font-bold">Daya Tampung</div>
+                                <div class="font-black text-blue-600 text-lg">${p[keytaDayaTampung] || 0}</div>
+                            </div>
+                            <i class="fas fa-chevron-right chevron-prodi text-slate-400 transition-transform"></i>
+                        </div>
+                    </div>
+
+                    <div id="${chartId}" class="hidden p-4 bg-slate-50 border-t border-slate-100">
+                        <div class="h-[250px] bg-white p-2 rounded-xl border border-slate-100 shadow-sm">
+                            <canvas></canvas>
+                        </div>
+                        <div class="chart-data mt-6 overflow-x-auto"></div>
+                    </div>
+                </div>
+            `;
+                }).join("");
+
+                header.onclick = () => {
+                    body.classList.toggle("hidden");
+                    body.classList.toggle("flex");
+                    header.querySelector('.chevron-univ').classList.toggle("rotate-180");
+                };
+
+                card.appendChild(header);
+                card.appendChild(body);
+                tableBody.appendChild(card);
+            });
+        }
+
+        /* ================= HISTORI ================= */
+        function getHistori(p) {
+            return historiData.find(h =>
+                h.PROGRAM_STUDI === p.PROGRAM_STUDI &&
+                h.PERGURUAN_TINGGI === p.PERGURUAN_TINGGI
+            );
+        }
+
+        /* ================= CHART ================= */
+        function toggleChart(id) {
+            const el = document.getElementById(id);
+            el.classList.toggle("hidden");
+
+            const parent = el.closest(".prodi-item");
+            parent.classList.toggle("open");
+
+            setTimeout(() => {
+
+                if (!chartInstances[id]) {
+
+                    const ctx = el.querySelector("canvas");
+
+                    const title = parent.querySelector("b").innerText;
+
+                    const univ = parent.closest(".univ-card")
+                        .querySelector("h3.univ-name").innerText;
+
+                    // 🔥 FIX: match prodi + univ
+                    const h = historiData.find(x =>
+                        (x.PROGRAM_STUDI || "").toLowerCase().trim() === title.toLowerCase().trim() &&
+                        (x.PERGURUAN_TINGGI || "").toLowerCase().trim() === univ.toLowerCase().trim()
+                    );
+
+                    console.log("HISTORI:", h);
+
+                    const dataDayaTampung = [
+                        Number(h?.DAYA_TAMPUNG_2021) || 0,
+                        Number(h?.DAYA_TAMPUNG_2022) || 0,
+                        Number(h?.DAYA_TAMPUNG_2023) || 0,
+                        Number(h?.DAYA_TAMPUNG_2024) || 0,
+                        Number(h?.DAYA_TAMPUNG_2025) || 0
+                    ];
+
+                    const dataPeminat = [
+                        Number(h?.PEMINAT_2021) || 0,
+                        Number(h?.PEMINAT_2022) || 0,
+                        Number(h?.PEMINAT_2023) || 0,
+                        Number(h?.PEMINAT_2024) || 0,
+                        Number(h?.PEMINAT_2025) || 0
+                    ];
+
+                    chartInstances[id] = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: [2021, 2022, 2023, 2024, 2025],
+                            datasets: [
+                                { label: 'Daya Tampung', data: dataDayaTampung, tension: 0.4 },
+                                { label: 'Peminat', data: dataPeminat, tension: 0.4 }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false
+                        }
+                    });
+
+                    // Populate data table
+                    const dataContainer = el.querySelector('.chart-data');
+                    if (h) {
+                        dataContainer.innerHTML = `
+                    <table class="w-full text-xs text-left">
+                        <thead class="bg-slate-100 text-slate-500 uppercase font-bold">
+                            <tr>
+                                <th class="p-2 rounded-tl-lg">Tahun</th>
+                                <th class="p-2 text-right">Daya Tampung</th>
+                                <th class="p-2 text-right rounded-tr-lg">Peminat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${[2021, 2022, 2023, 2024, 2025].map((tahun, idx) => {
+                            const dt = dataDayaTampung[idx];
+                            const pm = dataPeminat[idx];
+                            return `
+                                <tr class="border-b border-slate-100">
+                                    <td class="p-2 font-bold text-slate-700">${tahun}</td>
+                                    <td class="p-2 text-right text-blue-600 font-semibold">${dt}</td>
+                                    <td class="p-2 text-right text-orange-500 font-semibold">${pm}</td>
+                                </tr>
+                                `;
+                        }).join('')}
+                        </tbody>
+                    </table>
+                `;
+                    } else {
+                        dataContainer.innerHTML = '<div class="text-center text-sm text-slate-500 p-4">Data histori detail tidak tersedia.</div>';
+                    }
+                }
+
+            }, 150);
+        }
+
+        /* ================= LOGO ================= */
+        function getLogo(nama) {
+            const n = nama.toLowerCase();
+            const map = {
+                "padjadjaran": "https://upload.wikimedia.org/wikipedia/id/4/4f/Logo_Unpad.svg",
+                "bandung": "https://upload.wikimedia.org/wikipedia/id/6/6c/ITB_logo.png",
+                "indonesia": "https://apps.acts.ui.ac.id/images/Logo%20Univ/UI.png",
+                "ipb": "https://upload.wikimedia.org/wikipedia/id/5/5b/Logo_IPB.png",
+                "gadjah mada": "https://upload.wikimedia.org/wikipedia/id/8/87/Logo_Universitas_Gadjah_Mada.png",
+                "brawijaya": "https://upload.wikimedia.org/wikipedia/id/1/1a/Logo_Universitas_Brawijaya.png",
+                "diponegoro": "https://upload.wikimedia.org/wikipedia/id/7/7b/Logo_Universitas_Diponegoro.png",
+                "airlangga": "https://upload.wikimedia.org/wikipedia/id/6/64/Logo_Universitas_Airlangga.png",
+                "sebelas maret": "https://upload.wikimedia.org/wikipedia/id/8/8e/Logo_Universitas_Sebelas_Maret.png",
+                "its": "https://upload.wikimedia.org/wikipedia/id/2/23/Logo_ITS.png",
+                "sepuluh nopember": "https://upload.wikimedia.org/wikipedia/id/2/23/Logo_ITS.png",
+                "pendidikan indonesia": "https://pgpaud.upi.edu/cropped-logo-upi-1-png",
+                "negeri yogyakarta": "https://upload.wikimedia.org/wikipedia/id/3/36/Logo_UNY.png",
+                "negeri jakarta": "https://upload.wikimedia.org/wikipedia/id/d/d4/Logo_UNJ.png",
+                "negeri semarang": "https://upload.wikimedia.org/wikipedia/id/a/a2/Logo_Universitas_Negeri_Semarang.png"
+            };
+
+            for (let key in map) {
+                if (n.includes(key)) return map[key];
+            }
+
+            const cleanName = nama.replace(/(universitas|institut|politeknik|negeri|islam)/ig, '').trim();
+            const initials = cleanName || nama;
+            return `https://ui-avatars.com/api/?name=${encodeURIComponent(initials)}&background=random&color=fff&bold=true&rounded=true`;
+        }
+
+        /* ================= SEARCH ================= */
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const kw = e.target.value.toLowerCase();
+
+            const filtered = jalurData.filter(item =>
+                item.PERGURUAN_TINGGI.toLowerCase().includes(kw) ||
+                item.PROGRAM_STUDI.toLowerCase().includes(kw)
+            );
+
+            renderTable(filtered);
+        });
+    </script>
+</body>
+
+</html>
